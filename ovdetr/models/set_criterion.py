@@ -392,17 +392,14 @@ class OVSetCriterion(nn.Module):
         }
 
         # Compute the average number of target boxes accross all nodes, for normalization purposes
-        if "masks" in self.losses:
-            num_boxes = sum(len(t["labels"]) for t in targets)
-        else:
-            masks = []
-            for t in targets:
-                mask = t["labels"] == -2
-                for ind, v in enumerate(t["labels"]):
-                    if v in outputs["select_id"]:
-                        mask[ind] = True
-                masks.append(mask)
-            num_boxes = sum(len(t["labels"][m]) for t, m in zip(targets, masks))
+        masks = []
+        for t in targets:
+            mask = t["labels"] == -2
+            for ind, v in enumerate(t["labels"]):
+                if v in outputs["select_id"]:
+                    mask[ind] = True
+            masks.append(mask)
+        num_boxes = sum(len(t["labels"][m]) for t, m in zip(targets, masks))
         num_boxes = torch.as_tensor(
             [num_boxes], dtype=torch.float, device=next(iter(outputs.values())).device
         )

@@ -17,7 +17,7 @@ This repository contains the implementation of the following paper:
 
 ## Installation
 
-We use the same environment to [Deformable DETR](https://github.com/fundamentalvision/Deformable-DETR).
+We use the same environment as [Deformable DETR](https://github.com/fundamentalvision/Deformable-DETR).
 You are also required to install the following packages:
 
 - [CLIP](https://github.com/openai/CLIP)
@@ -30,7 +30,10 @@ We test our models under ```python=3.8, pytorch=1.11.0, cuda=10.1```, 8 Nvidia V
 Please refer to [dataset_prepare.md](./dataset_prepare.md).
 
 ## Running the Model
-We use the same scripts to [Deformable DETR](https://github.com/fundamentalvision/Deformable-DETR).
+We use the same scripts as [Deformable DETR](https://github.com/fundamentalvision/Deformable-DETR).
+
+# Model Zoo
+Please stay tuned.
 
 ## Citation
 If you find our work useful for your research, please consider citing the paper:
@@ -47,7 +50,7 @@ If you find our work useful for your research, please consider citing the paper:
 <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/"><img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by-nc-sa/4.0/88x31.png" /></a><br />This work is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/">Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License</a>.
 
 ## Acknowledgement
-Our code is developed from [Deformable DETR](https://github.com/fundamentalvision/Deformable-DETR), [CLIP](https://github.com/openai/CLIP) and [ViLD](https://github.com/tensorflow/tpu/tree/master/models/official/detection/projects/vild).
+We would like to thanks [Deformable DETR](https://github.com/fundamentalvision/Deformable-DETR), [CLIP](https://github.com/openai/CLIP) and [ViLD](https://github.com/tensorflow/tpu/tree/master/models/official/detection/projects/vild) for their open-source projects.
 
 ## Contact
 Please contact [Yuhang Zang](mailto:zang0012@ntu.edu.sg) if you have any questions.

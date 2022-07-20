@@ -287,13 +287,24 @@ class OVDETR(DeformableDETR):
         select_id = uniq_labels.tolist()
         if len(select_id) < self.max_pad_len:
             pad_len = self.max_pad_len - len(uniq_labels)
-            extra_list = torch.tensor([i for i in self.seen_ids if i not in uniq_labels])
+            extra_list = torch.tensor([i for i in self.all_ids if i not in uniq_labels])
             extra_labels = extra_list[torch.randperm(len(extra_list))][:pad_len]
             select_id += extra_labels.tolist()
 
         text_query = self.zeroshot_w[:, select_id].t()
-        clip_query_ori = text_query
-        clip_query = self.patch2query(text_query)
+        img_query = []
+        for cat_id in select_id:
+            index = torch.randperm(len(self.clip_feat[cat_id]))[0:1]
+            img_query.append(self.clip_feat[cat_id][index])
+        img_query = torch.cat(img_query).to(text_query.device)
+        img_query = img_query / img_query.norm(dim=-1, keepdim=True)
+
+        mask = (torch.rand(len(text_query)) < self.prob).float().unsqueeze(1).to(text_query.device)
+        clip_query_ori = (text_query * mask + img_query * (1 - mask)).detach()
+
+        text_query = self.patch2query(text_query)
+        img_query = self.patch2query_img(img_query)
+        clip_query = text_query * mask + img_query * (1 - mask)
 
         query_embeds = None
         if not self.two_stage:
