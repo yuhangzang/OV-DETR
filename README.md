@@ -1,4 +1,4 @@
-<h1 align="center"> Open-vocabulary DETR </h1>
+<h1 align="center"> Open-Vocabulary DETR with Conditional Matching </h1>
 
 <h2 align="center">
   <a href="https://arxiv.org/pdf/2203.11876.pdf">arXiv</a> |
@@ -32,8 +32,12 @@ Please refer to [dataset_prepare.md](./dataset_prepare.md).
 ## Running the Model
 We use the same scripts as [Deformable DETR](https://github.com/fundamentalvision/Deformable-DETR).
 
-# Model Zoo
-Please stay tuned.
+## Model Zoo
+- Open-vocabulary COCO (AP50 metric)
+
+| Base | Novel| All | Model |
+|------|------|-----|-------|
+| 61.0 | 29.4 | 52.7|[Google Drive](https://drive.google.com/file/d/1_iypFgVsLQwXVrT5zDtKeFaxOcC_A3uO/view?usp=sharing)|
 
 ## Citation
 If you find our work useful for your research, please consider citing the paper:
