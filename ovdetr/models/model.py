@@ -242,7 +242,7 @@ class OVDETR(DeformableDETR):
         else:
             self.feature_align = nn.ModuleList([self.feature_align for _ in range(num_pred)])
 
-        self.seen_ids = torch.tensor(range(self.zeroshot_w.shape[-1]))
+        self.all_ids = torch.tensor(range(self.zeroshot_w.shape[-1]))
         self.max_len = max_len
         self.max_pad_len = max_len - 3
 

@@ -269,7 +269,7 @@ def build(image_set, args):
     PATHS = {
         "train": (
             root / "train2017",
-            root / "zero-shot" / f"{mode}_train2017_seen_2.json",
+            root / "zero-shot" / f"{mode}_train2017_seen_2_proposal.json",
         ),
         "val": (root / "val2017", root / "zero-shot" / f"{mode}_val2017_all_2.json"),
     }
