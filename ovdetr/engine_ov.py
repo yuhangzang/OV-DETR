@@ -33,6 +33,7 @@ def train_one_epoch(
     epoch: int,
     max_norm: float = 0,
     masks: bool = False,
+    amp: bool = False,
 ):
     model.train()
     criterion.train()
@@ -49,9 +50,7 @@ def train_one_epoch(
 
     # for samples, targets in metric_logger.log_every(data_loader, print_freq, header):
     for _ in metric_logger.log_every(range(len(data_loader)), print_freq, header):
-        optimizer.zero_grad()
-
-        with autocast():
+        with autocast(enabled=amp):
             if not masks:
                 outputs = model(samples, targets)
             else:
@@ -75,14 +74,24 @@ def train_one_epoch(
             print(loss_dict_reduced)
             sys.exit(1)
 
-        scaler.scale(losses).backward()
-        scaler.unscale_(optimizer)
-        if max_norm > 0:
-            grad_total_norm = torch.nn.utils.clip_grad_norm_(model.parameters(), max_norm)
+        if amp:
+            optimizer.zero_grad()
+            scaler.scale(losses).backward()
+            if max_norm > 0:
+                scaler.unscale_(optimizer)
+                grad_total_norm = torch.nn.utils.clip_grad_norm_(model.parameters(), max_norm)
+            else:
+                grad_total_norm = utils.get_total_grad_norm(model.parameters(), max_norm)
+            scaler.step(optimizer)
+            scaler.update()
         else:
-            grad_total_norm = utils.get_total_grad_norm(model.parameters(), max_norm)
-        scaler.step(optimizer)
-        scaler.update()
+            optimizer.zero_grad()
+            losses.backward()
+            if max_norm > 0:
+                grad_total_norm = torch.nn.utils.clip_grad_norm_(model.parameters(), max_norm)
+            else:
+                grad_total_norm = utils.get_total_grad_norm(model.parameters(), max_norm)
+            optimizer.step()
 
         metric_logger.update(
             loss=loss_value, **loss_dict_reduced_scaled, **loss_dict_reduced_unscaled
@@ -98,7 +107,9 @@ def train_one_epoch(
 
 
 @torch.no_grad()
-def evaluate(model, criterion, postprocessors, data_loader, base_ds, device, output_dir, label_map):
+def evaluate(
+    model, criterion, postprocessors, data_loader, base_ds, device, output_dir, label_map, amp
+):
     model.eval()
     criterion.eval()
 
@@ -112,7 +123,7 @@ def evaluate(model, criterion, postprocessors, data_loader, base_ds, device, out
         samples = samples.to(device)
         targets = [{k: v.to(device) for k, v in t.items()} for t in targets]
 
-        with autocast():
+        with autocast(enabled=amp):
             outputs = model(samples)
 
         orig_target_sizes = torch.stack([t["orig_size"] for t in targets], dim=0)
@@ -157,7 +168,7 @@ def evaluate(model, criterion, postprocessors, data_loader, base_ds, device, out
 
 @torch.no_grad()
 def lvis_evaluate(
-    model, criterion, postprocessors, data_loader, base_ds, device, output_dir, label_map
+    model, criterion, postprocessors, data_loader, base_ds, device, output_dir, label_map, amp
 ):
     model.eval()
     criterion.eval()
@@ -175,7 +186,7 @@ def lvis_evaluate(
         samples = samples.to(device)
         targets = [{k: v.to(device) for k, v in t.items()} for t in targets]
 
-        with autocast():
+        with autocast(enabled=amp):
             outputs = model(samples)
 
         orig_target_sizes = torch.stack([t["orig_size"] for t in targets], dim=0)

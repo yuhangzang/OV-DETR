@@ -153,7 +153,12 @@ def get_args_parser():
     parser.add_argument("--feature_loss_coef", default=2, type=float)
     parser.add_argument("--label_map", default=False, action="store_true")
     parser.add_argument("--max_len", default=15, type=int)
-    parser.add_argument("--clip_feat_path", default="./clip_feat.pkl", type=str)
+    # parser.add_argument("--clip_feat_path", default="./clip_feat.pkl", type=str)
+    parser.add_argument(
+        "--clip_feat_path",
+        default="./clip_feat_coco.pkl",
+        type=str,
+    )
     parser.add_argument("--prob", default=0.5, type=float)
 
     # dataset parameters
@@ -174,6 +179,7 @@ def get_args_parser():
     parser.add_argument(
         "--cache_mode", default=False, action="store_true", help="whether to cache images on memory"
     )
+    parser.add_argument("--amp", default=False, action="store_true")
 
     return parser
 
@@ -354,6 +360,7 @@ def main(args):
                 device,
                 args.output_dir,
                 args.label_map,
+                args.amp,
             )
             if args.output_dir:
                 utils.save_on_master(coco_evaluator.coco_eval["bbox"].eval, output_dir / "eval.pth")
@@ -367,6 +374,7 @@ def main(args):
                 device,
                 args.output_dir,
                 args.label_map,
+                args.amp,
             )
         return
 
@@ -395,6 +403,7 @@ def main(args):
             epoch,
             args.clip_max_norm,
             args.masks,
+            args.amp,
         )
         lr_scheduler.step()
         if args.output_dir:
@@ -425,6 +434,7 @@ def main(args):
                     device,
                     args.output_dir,
                     args.label_map,
+                    args.amp,
                 )
                 log_eval = True
             else:
@@ -440,6 +450,7 @@ def main(args):
                 device,
                 args.output_dir,
                 args.label_map,
+                args.amp,
             )
             log_eval = True
         else:

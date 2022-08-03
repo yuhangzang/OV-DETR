@@ -30,7 +30,7 @@ We test our models under ```python=3.8, pytorch=1.11.0, cuda=10.1```, 8 Nvidia V
 Please refer to [dataset_prepare.md](./dataset_prepare.md).
 
 ## Running the Model
-We use the same scripts as [Deformable DETR](https://github.com/fundamentalvision/Deformable-DETR).
+Please refer to [run_scripts.md](./run_scripts.md).
 
 ## Model Zoo
 - Open-vocabulary COCO (AP50 metric)

@@ -302,8 +302,9 @@ class OVDETR(DeformableDETR):
         mask = (torch.rand(len(text_query)) < self.prob).float().unsqueeze(1).to(text_query.device)
         clip_query_ori = (text_query * mask + img_query * (1 - mask)).detach()
 
-        text_query = self.patch2query(text_query)
-        img_query = self.patch2query_img(img_query)
+        dtype = self.patch2query.weight.dtype
+        text_query = self.patch2query(text_query.type(dtype))
+        img_query = self.patch2query_img(img_query.type(dtype))
         clip_query = text_query * mask + img_query * (1 - mask)
 
         query_embeds = None
@@ -400,9 +401,10 @@ class OVDETR(DeformableDETR):
         outputs_coord_list = []
         num_patch = 15
         cache = None
+        dtype = self.patch2query.weight.dtype
         for c in range(len(select_id) // num_patch + 1):
             clip_query = self.zeroshot_w[:, c * num_patch : (c + 1) * num_patch].t()
-            clip_query = self.patch2query(clip_query)
+            clip_query = self.patch2query(clip_query.type(dtype))
             (
                 hs,
                 init_reference,
